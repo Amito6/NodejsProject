@@ -28,8 +28,21 @@ $("#signup-form").submit((e)=>{
         data : new FormData(e.target),
         contentType : false,
         processData : false,
+        beforSend : ()=>{
+            $(".before-send").removeClass("d-none");
+            $(".signup-btn").addClass("d-none")
+        },
         success:(response)=>{
-            console.log(response);
+            $(".before-send").addClass("d-none");
+            $(".signup-btn").removeClass("d-none");
+             const label = response.message.label;
+            const field = "."+response.message.field;
+           // console.log(field,label);
+            $(field).addClass("border border-danger")
+            $(field+"-error").html(label)
+        },
+        error : (error)=>{
+            console.log(error);
         }
     })
 })

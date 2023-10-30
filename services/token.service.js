@@ -17,6 +17,21 @@ const create = async (request,expiresIn) =>{
 
 }
 
+const createCustomToken = async (data,expiresIn) =>{
+    const FormData = data.body;
+    const endPoint = data.endPoint;
+    const api = data.originalUrl;
+    const iss = endPoint+api
+  //  console.log(endPoint,api);
+    const token = await jwt.sign({
+    iss : iss,
+    data:FormData,
+   },secretKey,{expiresIn:expiresIn}); //2minutes
+   return token;
+
+}
+
+
 const verify = (request) =>{
       const token = request.body.token
     if(token)
@@ -26,17 +41,27 @@ const verify = (request) =>{
        const tmp = jwt.verify(token,secretKey);
        const requestComingFrom = tmp.iss;
        if(issService.indexOf(requestComingFrom) !=-1){
-            return true;
+            return {
+                isVerified : true,
+                data : tmp.data
+            };
        }else{
-        return false;
+       
+        return {
+            isVerified : false,
+        };
        }
         
     } catch (error) {
-        return false;
+        return {
+            isVerified : false,
+        };
     }
     }
     else{
-        return false;
+        return {
+            isVerified : false,
+        };
     }
 
 }
@@ -44,5 +69,6 @@ const verify = (request) =>{
 
 module.exports = {
     createToken : create,
-    verifyToken : verify
+    verifyToken : verify,
+    createCustomToken:createCustomToken
 }

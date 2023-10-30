@@ -11,6 +11,7 @@ const app = express();
 const indexRouter = require("./routes/index.routes")
 const signupRouter = require("./routes/signup.routes")
 const companyRouter = require("./routes/company.routes")
+const userRouter = require("./routes/user.routes")
 const tokenService = require("./services/token.service")
 
 
@@ -27,13 +28,15 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use("/",indexRouter);  
+
 app.use("/api/signup",signupRouter);
+
 
 //implementung api security
 
 app.use((request,response,next)=>{
   const isVerified = tokenService.verifyToken(request);
-  if(isVerified)
+  if(isVerified.isVerified)
   {
     next()
   }
@@ -47,6 +50,8 @@ app.use((request,response,next)=>{
   
 })
 app.use("/api/private/company",companyRouter);  
+
+app.use("/api/private/user",userRouter)
 
 
 
